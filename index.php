@@ -1,6 +1,6 @@
 <?php
 
-define('API_KEY','209348445:AAHlyQ3OMEb9Y2JVpA_zbb1_orTVL0Cwj4k');
+define('API_KEY','209348445:AAE0cUDH26poodD_CAx81PMEtYgkfV-m3wc');
 //----######------
 function makereq($method,$datas=[]){
     $url = "https://api.telegram.org/bot".API_KEY."/".$method;
@@ -158,7 +158,7 @@ var_dump(makereq('sendMessage',[
             ]
         ])
     ]));
- }
+ 
 if($textmessage == 'back')
 var_dump(makereq('sendMessage',[
         'chat_id'=>$update->message->chat->id,
@@ -175,7 +175,7 @@ var_dump(makereq('sendMessage',[
             ]
         ])
     ]));
- }    
+     
  
 if($textmessage == 'List Bots')
 var_dump(makereq('sendMessage',[
@@ -193,7 +193,7 @@ var_dump(makereq('sendMessage',[
             ]
         ])
     ]));
- } 
+  
 elseif($textmessage == 'TeleBlasterBot')
   {
   	Sendmessage($chat_id,"خالی");
