@@ -1,12 +1,13 @@
 <?php
-define('API_KEY', '245076155:AAHjkwP2hleEpvLuBRRXa-26jTNrfgUudvE');
-$admin = '68747297';
-function api($method,$datas=[]){
+
+define('API_KEY','209348445:AAHlyQ3OMEb9Y2JVpA_zbb1_orTVL0Cwj4k');
+//----######------
+function makereq($method,$datas=[]){
     $url = "https://api.telegram.org/bot".API_KEY."/".$method;
     $ch = curl_init();
     curl_setopt($ch,CURLOPT_URL,$url);
     curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
-    curl_setopt($ch,CURLOPT_POSTFIELDS,$datas);
+    curl_setopt($ch,CURLOPT_POSTFIELDS,http_build_query($datas));
     $res = curl_exec($ch);
     if(curl_error($ch)){
         var_dump(curl_error($ch));
@@ -14,452 +15,253 @@ function api($method,$datas=[]){
         return json_decode($res);
     }
 }
-/*function apipwd($method,$datas=[]){
-    $url = "https://api.pwrtelegram.xyz/bot".API_KEY."/".$method;
-    $ch = curl_init();
-    curl_setopt($ch,CURLOPT_URL,$url);
-    curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
-    curl_setopt($ch,CURLOPT_POSTFIELDS,$datas);
-    $res = curl_exec($ch);
-    if(curl_error($ch)){
-        var_dump(curl_error($ch));
-    }else{
-        return json_decode($res);
+//##############=--API_REQ
+function apiRequest($method, $parameters) {
+  if (!is_string($method)) {
+    error_log("Method name must be a string\n");
+    return false;
+  }
+  if (!$parameters) {
+    $parameters = array();
+  } else if (!is_array($parameters)) {
+    error_log("Parameters must be an array\n");
+    return false;
+  }
+  foreach ($parameters as $key => &$val) {
+    // encoding to JSON array parameters, for example reply_markup
+    if (!is_numeric($val) && !is_string($val)) {
+      $val = json_encode($val);
     }
-}*/
-function req($url){
-  $res = file_get_contents($url);
-  return json_decode($res);
+  }
+  $url = "https://api.telegram.org/bot".API_KEY."/".$method.'?'.http_build_query($parameters);
+  $handle = curl_init($url);
+  curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 5);
+  curl_setopt($handle, CURLOPT_TIMEOUT, 60);
+  return exec_curl_request($handle);
 }
-function curl($url) {
-	$ch = curl_init();
-	$timeout = 5;
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-	$data = curl_exec($ch);
-	curl_close($ch);
-	return $data;
+//----######------
+//---------
+$update = json_decode(file_get_contents('php://input'));
+var_dump($update);
+//=========
+$chat_id = $update->message->chat->id;
+$boolean = file_get_contents('booleans.txt');
+  $booleans= explode("\n",$boolean);
+
+$message_id = $update->message->message_id;
+$from_id = $update->message->from->id;
+$name = $update->message->from->first_name;
+$username = $update->message->from->username;
+$textmessage = isset($update->message->text)?$update->message->text:'';
+$rpto = $update->message->reply_to_message->forward_from->id;
+$stickerid = $update->message->reply_to_message->sticker->file_id;
+$photo = $update->message->photo;
+$video = $update->message->video;
+$sticker = $update->message->sticker;
+$file = $update->message->document;
+$music = $update->message->audio;
+$voice = $update->message->voice;
+$forward = $update->message->forward_from;
+$admin = 193930120;
+//-------
+function SendMessage($ChatId, $TextMsg)
+{
+ makereq('sendMessage',[
+'chat_id'=>$ChatId,
+'text'=>$TextMsg,
+'parse_mode'=>"MarkDown"
+]);
 }
-function r($command,$text){
-  $i = str_replace("$command","",$text);
-  return str_replace(" ","",$i);
+function SendSticker($ChatId, $sticker_ID)
+{
+ makereq('sendSticker',[
+'chat_id'=>$ChatId,
+'sticker'=>$sticker_ID
+]);
 }
-
-$server = "dbsserver";
-$username = "usernamedb";
-$password = "passworddb";
-$dbs = "databasename";
-$db = new mysqli($server, $username, $password, $dbs);
-$content = file_get_contents("php://input");
-$u = json_decode($content, true);
-$from = $u['message']['from']['id'];
-$banlist = $db->query('SELECT id FROM ban WHERE id='.$from);
-if($u['message']['text'] and $banlist->num_rows == 0){
-  $msg = $u['message']['message_id'];
-  $text = $u['message']['text'];
-  $chat_id = $u['message']['chat']['id'];
-  if($text == '/start' or $text == '/help' or $text == '/help@Arrow_robot'){
-    $check = $db->query('SELECT id FROM member WHERE id='.$chat_id);
-    if($check->num_rows == 0){
-      $db->query('INSERT INTO member (id) VALUES ('.$chat_id.')');
-    }
-    api('sendMessage',array(
-      'chat_id'=>$chat_id,
-      'text'=>"
-Hello I'm Arrow
-
-Commands :
-
-<b>1</b>> /help
-<b>2</b>> /echo [text]
-<b>3</b>> /ip [URL|ip]
-<b>4</b>> /imdb [name]
-<b>5</b>> /spotify [name track]
-<b>6</b>> /qr [text]
-<b>7</b>> /translate [text]      #text to fa
-<b>8</b>> /loc [name City]
-<b>9</b>> /calc [expression]
-<b>10</b>> /cat
-<b>11</b>> /tosticker     #by_reply
-<b>12</b>> /tophoto       #by_reply
-      ",
-      'parse_mode'=>'HTML',
-      'reply_markup'=>json_encode(array(
-        'inline_keyboard'=>array(
-          array(
-            array('text'=>'Creator','url'=>'https://telegram.me/negative'),
-            array('text'=>'Channel','url'=>'https://telegram.me/taylor_team')
-          ),
-          array(
-            array('text'=>'فارسی 🇮🇷','callback_data'=>'fa')
-          )
-        )
-      ))
-    ));
-  }
-  elseif(preg_match('/^\/([Ee]cho) (.*)/s',$text)){
-    preg_match('/^\/([Ee]cho) (.*)/s',$text,$match);
-    api('sendMessage',array(
-      'chat_id'=>$chat_id,
-      'text'=>$match[2].'',
-      'parse_mode'=>'HTML'
-    ));
-  }
-  elseif(preg_match('/^\/([Ii]p) (.*)/',$text)){
-    preg_match('/^\/([Ii]p) (.*)/s',$text,$match);
-    $txt = urlencode($match[2]);
-    $res = json_decode(file_get_contents('http://api.ipinfodb.com/v3/ip-city/?key=bd36e5c11b78ac040a0858df1df61b3ac9fe6d1717bfe073690617557dd9dc42&ip='.$txt.'&format=json'));
-    api('sendLocation',array('chat_id'=>$chat_id,'latitude'=>$res->latitude,'longitude'=>$res->longitude));
-    api('sendMessage',array(
-      'chat_id'=>$chat_id,
-      'text'=>"ip : <code>".$res->ipAddress."</code>\nCountry : <b>".$res->countryCode." - ".$res->countryName."</b>",
-      'parse_mode'=>'HTML'
-    ));
-  }
-  elseif(preg_match('/^\/([Ii]mdb) (.*)/s',$text)){
-    preg_match('/^\/([Ii]mdb) (.*)/s',$text,$match);
-    $txt = urlencode($match[2]);
-    $rs = json_decode(file_get_contents('http://www.omdbapi.com/?t='.$txt));
-    if(!$rs->Error){
-      api('sendMessage',array(
-        'chat_id'=>$chat_id,
-        'text'=>"<b>Title</b> : ".$rs->Title."\n\n<b>Year</b> : ".$rs->Year."\n<b>Runtime</b> : ".$rs->Runtime."\n<b>Language</b> : ".$rs->Language,
-        'parse_mode'=>'HTML'
-      ));
-      if($rs->Poster){
-        file_put_contents('poster.jpg',file_get_contents($rs->Poster));
-        api('sendSticker',array(
-          'chat_id'=>$chat_id,
-          'sticker'=>new CURLFile('poster.jpg')
-        ));
-      }
-    }else{
-      api('sendMessage',array('chat_id'=>$chat_id,'text'=>"Movie not found!"));
-    }
-  }
-  elseif(preg_match('/^\/([Ss]potify) (.*)/s',$text)){
-    preg_match('/^\/(spotify) (.*)/s',$text,$match);
-    $txt = urlencode($match[2]);
-    $rs = json_decode(file_get_contents('https://api.spotify.com/v1/search?limit=1&type=track&q='.$txt));
-    if($rs->tracks->items[0]->album->name){
-      api('sendMessage',array(
-        'chat_id'=>$chat_id,
-        'text'=>"<b>Artists Name</b> : ".$rs->tracks->items[0]->artists[0]->name."\n<b>Name</b> : ".$rs->tracks->items[0]->name."\n",
-        'parse_mode'=>'HTML'
-      ));
-      api('sendMessage',array('chat_id'=>$chat_id,'text'=>"Poster 😇👇"));
-      api('sendChatAction',array(
-        'chat_id'=>$chat_id,
-        'action'=>'upload_photo'
-      ));
-      file_put_contents('poster.jpg',file_get_contents($rs->tracks->items[0]->album->images[0]->url));
-      api('sendPhoto',array(
-        'chat_id'=>$chat_id,
-        'photo'=>new CURLFile('poster.jpg')
-      ));
-      api('sendChatAction',array(
-        'chat_id'=>$chat_id,
-        'action'=>"record_audio"
-      ));
-      file_put_contents('music.mp3',file_get_contents($rs->tracks->items[0]->preview_url));
-      $title = $rs->tracks->items[0]->name;
-      api('sendAudio',array(
-        'chat_id'=>$chat_id,
-        'audio'=>new CURLFile('music.mp3'),
-        'title'=>"$title"
-      ));
-    }
-  }
-  elseif(preg_match('/^\/([q]r) (.*)/s',$text)){
-    preg_match('/^\/([q]r) (.*)/s',$text,$mtch);
-    $txt = urlencode($mtch[2]);
-    file_put_contents('poster.jpg',file_get_contents('https://api.qrserver.com/v1/create-qr-code/?size=500x500&data='.$txt));
-    api('sendPhoto',array(
-      'chat_id'=>$chat_id,
-      'photo'=>new CURLFile('poster.jpg')
-    ));
-  }
-  elseif(preg_match('/^\/([t]ranslate) (.*)/s',$text)){
-    preg_match('/^\/([t]ranslate) (.*)/s',$mtch);
-    $txt = urlencode($mtch[2]);
-    $rs = json_decode(file_get_contents('https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20160119T111342Z.fd6bf13b3590838f.6ce9d8cca4672f0ed24f649c1b502789c9f4687a&format=plain&lang=fa&text='.$txt));
-    api('sendMessage',array(
-      'chat_id'=>$chat_id,
-      'text'=>"".$rs->text[0],
-      'reply_to_message_id'=>$msg
-    ));
-  }
-  elseif(preg_match('/^\/([l]oc)/s',$text)){
-    preg_match('/^\/([l]oc)/s',$text,$mtch);
-    $txt = urlencode($mtch[2]);
-    $rs = json_decode(file_get_contents('http://maps.googleapis.com/maps/api/geocode/json?address='.$txt));
-    $lat = $rs->results[0]->geometry->location->lat;
-    $lng = $rs->results[0]->geometry->location->lng;
-    api('sendLocation',array(
-      'chat_id'=>$chat_id,
-      'latitude'=>$lat,
-      'longitude'=>$lng
-    ));
-  }
-  elseif(preg_match('/^\/(calc) (.*)/s',$text)){
-    preg_match('/^\/(calc) (.*)/s',$text,$mtch);
-    $txt = urlencode($mtch[2]);
-    $rs = file_get_contents('http://api.mathjs.org/v1/?expr='.$txt);
-    api('sendMessage',array(
-      'chat_id'=>$chat_id,
-      'text'=>"<code>".$rs."</code>",
-      'parse_mode'=>'HTML'
-    ));
-  }
-  elseif(preg_match('/^\/(cat)/s',$text)){
-    file_put_contents('cat.jpg',file_get_contents('http://thecatapi.com/api/images/get?format=src&type=jpg'));
-    api('sendPhoto',array(
-      'chat_id'=>$chat_id,
-      'photo'=>new CURLFile('cat.jpg')
-    ));
-  }
-  elseif(preg_match('/^\/(bc) (.*)/s',$text) and $from == $admin){
-    preg_match('/^\/(bc) (.*)/s',$text,$mtch);
-    $txt = $mtch[2];
-    $select = $db->query('SELECT id FROM member');
-    while($rw = $select->fetch_assoc()){
-      api('sendMessage',array(
-        'chat_id'=>$rw['id'],
-        'text'=>"$txt",
-        'parse_mode'=>'HTML'
-      ));
-    }
-  }
-  elseif(preg_match('/^\/(ban) (.*)/s',$text) and $from == $admin){
-    preg_match('/^\/(ban) (.*)/s',$text,$mtch);
-    $txt = $mtch[2];
-    $select = $db->query('SELECT id FROM ban WHERE id='.$txt);
-    if($select->num_rows == 0){
-      $db->query('INSERT INTO ban (id) VALUES ('.$txt.')');
-    }
-    api('sendMessage',array(
-      'chat_id'=>$chat_id,
-      'text'=>"<b>Banned</b>",
-      'parse_mode'=>'HTML'
-    ));
-  }
-  elseif(preg_match('/^\/(unban) (.*)/s',$text) and $from == $admin){
-    preg_match('/^\/(unban) (.*)/s',$text,$mtch);
-    $txt = $mtch[2];
-    $select = $db->query('SELECT id FROM ban WHERE id='.$txt);
-    if($select->num_rows != 0){
-      $db->query('DELETE FROM ban WHERE id='.$txt);
-    }
-    api('sendMessage',array(
-      'chat_id'=>$chat_id,
-      'text'=>"<b>Unbanned</b>",
-      'parse_mode'=>'HTML'
-    ));
-  }
-  elseif(preg_match('/^\/([Ll]eave)/',$text) and $from == $admin){
-    api('leaveChat',array(
-      'chat_id'=>$chat_id
-    ));
-  }
-  elseif(preg_match('/^\/([Ss]tats)/',$text) and $from == $admin){
-    $chs = $db->query('SELECT id FROM member');
-    api('sendMessage',array(
-      'chat_id'=>$chat_id,
-      'text'=>"<b>Members : </b>".$chs->num_rows."\n",
-      'parse_mode'=>'HTML'
-    ));
-  }
-  elseif(preg_match('/^\/(reply) (.*)/s',$text) and $u['message']['reply_to_message']){
-    preg_match('/^\/(reply) (.*)/s',$text,$match);
-    $txt = $match[2];
-    $rpid = $u['message']['reply_to_message']['message_id'];
-    api('sendMessage',array(
-      'chat_id'=>$chat_id,
-      'text'=>"$txt",
-      'parse_mode'=>'HTML',
-      'reply_to_message_id'=>$rpid
-    ));
-  }
-  elseif(preg_match('/^\/(tosticker)/',$text) and $u['message']['reply_to_message']){
-    if($u['message']['reply_to_message']['photo'][3]){
-      $file = $u['message']['reply_to_message']['photo'][3]['file_id'];
-      $get = api('getfile',array('file_id'=>"$file"));
-      $patch = $get->result->file_path;
-      file_put_contents('sticker.png',file_get_contents('https://api.telegram.org/file/bot'.API_KEY.'/'.$patch));
-      api('sendSticker',array(
-        'chat_id'=>$chat_id,
-        'sticker'=>new CURLFile('sticker.png')
-      ));
-    }elseif($u['message']['reply_to_message']['photo'][2]){
-      $file = $u['message']['reply_to_message']['photo'][2]['file_id'];
-      $get = api('getfile',array('file_id'=>"$file"));
-      $patch = $get->result->file_path;
-      file_put_contents('sticker.png',file_get_contents('https://api.telegram.org/file/bot'.API_KEY.'/'.$patch));
-      api('sendSticker',array(
-        'chat_id'=>$chat_id,
-        'sticker'=>new CURLFile('sticker.png')
-      ));
-    }elseif($u['message']['reply_to_message']['photo'][1]){
-      $file = $u['message']['reply_to_message']['photo'][1]['file_id'];
-      $get = api('getfile',array('file_id'=>"$file"));
-      $patch = $get->result->file_path;
-      file_put_contents('sticker.png',file_get_contents('https://api.telegram.org/file/bot'.API_KEY.'/'.$patch));
-      api('sendSticker',array(
-        'chat_id'=>$chat_id,
-        'sticker'=>new CURLFile('sticker.png')
-      ));
-    }
-  }
-  elseif(preg_match('/^\/(tophoto)/',$text) and $u['message']['reply_to_message']){
-    if($u['message']['reply_to_message']['sticker']){
-      $file = $u['message']['reply_to_message']['sticker']['file_id'];
-      $get = api('getfile',array('file_id'=>"$file"));
-      $patch = $get->result->file_path;
-      file_put_contents('sticker.png',file_get_contents('https://api.telegram.org/file/bot'.API_KEY.'/'.$patch));
-      api('sendPhoto',array(
-        'chat_id'=>$chat_id,
-        'photo'=>new CURLFile('sticker.png')
-      ));
-    }
-  }
-  /*if($u['message']['new_chat_member']){
-    if($u['message']['from']['id'] != 68747297){
-      $idc = $u['message']['chat']['id'];
-      api('leaveChat',array(
-        'chat_id'=>$idc
-      ));
-    }
-  }*/
-}elseif($banlist->num_rows != 0){
-  api('sendMessage',array(
-    'chat_id'=>$u['message']['chat']['id'],
-    'text'=>"You Are Banned"
-  ));
+function Forward($KojaShe,$AzKoja,$KodomMSG)
+{
+makereq('ForwardMessage',[
+'chat_id'=>$KojaShe,
+'from_chat_id'=>$AzKoja,
+'message_id'=>$KodomMSG
+]);
 }
-if($u['callback_query']){
-  $id = $u['callback_query']['id'];
-  $chat_id = $u['callback_query']['message']['chat']['id'];
-  $msg = $u['callback_query']['message']['message_id'];
-  $data = $u['callback_query']['data'];
-  if($data == 'fa'){
-    api('editMessageText',array(
-      'chat_id'=>$chat_id,
-      'message_id'=>$msg,
-      'text'=>"
-سلام من ارو هستم
+function save($filename,$TXTdata)
+	{
+	$myfile = fopen($filename, "w") or die("Unable to open file!");
+	fwrite($myfile, "$TXTdata");
+	fclose($myfile);
+	}
 
-دستورات :
+//------------
 
-<b>1</b>> /help
-<b>2</b>> /echo [متن]
-<b>3</b>> /ip [ادرس]
-<b>4</b>> /imdb [اسم]
-<b>5</b>> /spotify [نام ترک]
-<b>6</b>> /qr [متن]
-<b>7</b>> /translate [متن]
-<b>8</b>> /loc [نام شهر]
-<b>9</b>> /calc [expression]
-<b>10</b>> /cat
-<b>11</b>> /tosticker     #by_reply
-<b>12</b>> /tophoto       #by_reply
-      ",
-      'parse_mode'=>'HTML',
-      'reply_markup'=>json_encode(array(
-        'inline_keyboard'=>array(
-          array(
-            array('text'=>'برگشت','callback_data'=>'bc')
-          )
-        )
-      ))
-    ));
-  }if($data == 'bc'){
-    api('editMessageText',array(
-      'chat_id'=>$chat_id,
-      'message_id'=>$msg,
-      'text'=>"
-Hello I'm Arrow
-
-Commands :
-
-<b>1</b>> /help
-<b>2</b>> /echo [text]
-<b>3</b>> /ip [URL|ip]
-<b>4</b>> /imdb [name]
-<b>5</b>> /spotify [name track]
-<b>6</b>> /qr [text]
-<b>7</b>> /translate [text]      #text to fa
-<b>8</b>> /loc [name City]
-<b>9</b>> /calc [expression]
-<b>10</b>> /cat
-<b>11</b>> /tosticker     #by_reply
-<b>12</b>> /tophoto       #by_reply
-      ",
-      'parse_mode'=>'HTML',
-      'reply_markup'=>json_encode(array(
-        'inline_keyboard'=>array(
-          array(
-            array('text'=>'Creator','url'=>'https://telegram.me/negative'),
-            array('text'=>'Channel','url'=>'https://telegram.me/taylor_team')
-          ),
-          array(
-            array('text'=>"فارسی 🇮🇷",'callback_data'=>'fa')
-          )
-        )
-      ))
-    ));
+if($textmessage == '/start')
+ if ($from_id == $admin) {
+var_dump(makereq('sendMessage',[
+        'chat_id'=>$update->message->chat->id,
+        'text'=>"hi admin",
+        'parse_mode'=>'MarkDown',
+        'reply_markup'=>json_encode([
+            'keyboard'=>[
+              [
+                ['text'=>"stats"],['text'=>"sendtoall"]
+              ],
+	      [
+	        ['text'=>"help"]
+	      ]
+            ]
+        ])
+    ]));
+ }
+ else{
+ 
+var_dump(makereq('sendMessage',[
+        'chat_id'=>$update->message->chat->id,
+        'text'=>"سلام `$name` \n\nاز دکمه های زیر استفاده کن",
+        'parse_mode'=>'MarkDown',
+        'reply_markup'=>json_encode([
+            'keyboard'=>[
+              [
+                ['text'=>"TeleBlaster Project"],['text'=>"List Members",]
+              ],
+	      [
+                ['text'=>"List Bots"],['text'=>"FeedBack"]
+              ]
+            ]
+        ])
+    ]));	
+    $txxt = file_get_contents('member.txt');
+$pmembersid= explode("\n",$txxt);
+	if (!in_array($chat_id,$pmembersid)) {
+		$aaddd = file_get_contents('member.txt');
+		$aaddd .= $chat_id."
+";
+    	file_put_contents('member.txt',$aaddd);
+}
+ }
+ 
+if($textmessage == 'List Members')
+var_dump(makereq('sendMessage',[
+        'chat_id'=>$update->message->chat->id,
+        'text'=>"یکی از دکمه های زیر رو انتخاب کن",
+        'parse_mode'=>'MarkDown',
+        'reply_markup'=>json_encode([
+            'keyboard'=>[
+              [
+                ['text'=>"mohamadhossein"],['text'=>"parsa"]
+              ],
+	      [
+	        ['text'=>"back"]
+	      ]
+            ]
+        ])
+    ]));
+ }
+if($textmessage == 'back')
+var_dump(makereq('sendMessage',[
+        'chat_id'=>$update->message->chat->id,
+        'text'=>"برگشتیم",
+        'parse_mode'=>'MarkDown',
+        'reply_markup'=>json_encode([
+            'keyboard'=>[
+           [
+                ['text'=>"TeleBlaster Project"],['text'=>"List Members",]
+              ],
+	      [
+                ['text'=>"List Bots"],['text'=>"FeedBack"]
+              ]
+            ]
+        ])
+    ]));
+ }    
+ 
+if($textmessage == 'List Bots')
+var_dump(makereq('sendMessage',[
+        'chat_id'=>$update->message->chat->id,
+        'text'=>"یکی از دکمه های زیر رو انتخاب کن",
+        'parse_mode'=>'MarkDown',
+        'reply_markup'=>json_encode([
+            'keyboard'=>[
+              [
+                ['text'=>"TeleBlaster"],['text'=>"TeleBlasterBot"]
+              ],
+	      [
+	        ['text'=>"back"]
+	      ]
+            ]
+        ])
+    ]));
+ } 
+elseif($textmessage == 'TeleBlasterBot')
+  {
+  	Sendmessage($chat_id,"خالی");
+  }  
+elseif($textmessage == 'TeleBlaster')
+  {
+  	Sendmessage($chat_id,"خالی");
+  }  
+elseif($textmessage == 'mohamadhossein')
+  {
+  	Sendmessage($chat_id,"خالی");
   }
-}
-if($u['inline_query']){
-  $id = $u['inline_query']['id'];
-  $query = $u['inline_query']['query'];
-  if($query){
-    $txt = urlencode($query);
-    api('answerInlineQuery',array(
-      'inline_query_id'=>$id,
-      'cache_time'=>1,
-      'results'=>json_encode(array(
-        array(
-          'type'=>'photo',
-          'id'=>base64_encode('1'),
-          'photo_url'=>'http://apimeme.com/meme?meme=WTF&top='.$txt.'&bottom=',
-          'thumb_url'=>'http://apimeme.com/meme?meme=WTF&top='.$txt.'&bottom='
-        ),
-        array(
-          'type'=>'photo',
-          'id'=>base64_encode('2'),
-          'photo_url'=>'http://apimeme.com/meme?meme=What+Year+Is+It&top='.$txt.'&bottom=',
-          'thumb_url'=>'http://apimeme.com/meme?meme=What+Year+Is+It&top='.$txt.'&bottom='
-        ),
-        array(
-          'type'=>'photo',
-          'id'=>base64_encode('3'),
-          'photo_url'=>'http://apimeme.com/meme?meme=No+I+Cant+Obama&top='.$txt.'&bottom=',
-          'thumb_url'=>'http://apimeme.com/meme?meme=No+I+Cant+Obama&top='.$txt.'&bottom='
-        )
-      ))
-    ));
+elseif($textmessage == 'parsa')
+  {
+  	Sendmessage($chat_id,"خالی");
+  }  
+elseif($textmessage == 'TeleBlaster Project')
+  {
+  	Sendmessage($chat_id,"خالی");
+  }
+ 
+elseif($textmessage == 'FeedBack')
+  {
+  	Sendmessage($chat_id,"به زودی");
+  }  
 
-  }/*elseif(preg_match('/^(sticker) (.*)/',$query)){
-    preg_match('/^(sticker) (.*)/',$query,$match);
-    $txt = urlencode($match[2]);
-    file_put_contents('sticker.png',file_get_contents('http://api.img4me.com/?text='.$txt.'&font=arial&fcolor=000000&size=30&bcolor=FFFFFF&type=png'));
-    $gets = api('sendSticker',array(
-      'chat_id'=>-170511242,
-      'sticker'=>new CURLFile('sticker.png')
-    ));
-    $sc3 = $gets->result->sticker->file_id;
-    api('answerInlineQuery',array(
-      'inline_query_id'=>$id,
-      'cache_time'=>1,
-      'results'=>json_encode(array(
-        array(
-          'type'=>'sticker',
-          'id'=>base64_encode('1'),
-          'sticker_file_id'=>"$sc3"
-        )
-      ))
-    ));
-  }*/
+elseif($textmessage == 'help')
+if($chat_id == $admin){
+	{
+		Sendmessage($chat_id,"stats : نماش تعداد کاربران
+   
+    sendtoall : ارسال کردن پیام به تمام کاربران ربات");
+	}
 }
-$db->close();
+ 
+	elseif($textmessage == 'stats' && $chat_id == $admin)
+	{
+		$txtt = file_get_contents('member.txt');
+		$membersidd= explode("\n",$txtt);
+		$mmemcount = count($membersidd) -1;
+{
+sendmessage($chat_id,"تعداد کاربران ربات : $mmemcount");
+}
+}
+        elseif ($textmessage =="sendtoall"  && $chat_id == $admin | $booleans[0]=="false") {
+	{
+          sendmessage($chat_id,"لطفا پیام خودرا ارسال کنید");
+	}
+      $boolean = file_get_contents('booleans.txt');
+		  $booleans= explode("\n",$boolean);
+	  	$addd = file_get_contents('banlist.txt');
+	  	$addd = "true";
+    	file_put_contents('booleans.txt',$addd);
+
+    }
+      elseif($chat_id == $admin && $booleans[0] == "true") {
+    $texttoall = $textmessage;
+		$ttxtt = file_get_contents('member.txt');
+		$membersidd= explode("\n",$ttxtt);
+		for($y=0;$y<count($membersidd);$y++){
+			sendmessage($membersidd[$y],"$texttoall");
+
+		}
+		$memcout = count($membersidd)-1;
+	 	{
+	 	Sendmessage($chat_id,"پیغام شما به $memcout مخاطب ارسال شد.");
+	 	}
+         $addd = "false";
+    	file_put_contents('booleans.txt',$addd);
+    	}
+?>
