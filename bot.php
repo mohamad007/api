@@ -1,5 +1,5 @@
 <?php 
-$token = '113471140:AAEflTxst72HedxsMvfbixQORykJx8doxFY';
+$token = '276874700:AAFWzQdCIuXY8GzaSEgxa8M8QdkMltwsxwk';
 // read incoming info and grab the chatID 
 $json = file_get_contents('php://input');
 $telegram = urldecode ($json);
