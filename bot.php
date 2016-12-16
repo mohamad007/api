@@ -1,12 +1,13 @@
 <?php
 ob_start();
-define('API_KEY','286108480:AAEVjtelIdebiEfDuP8eM3aAfIkjCxDC0Pg');
+define('API_KEY','286108480:AAGoQB48aX7y3DVUvP6GMnQqnEpQHVpvi7M');
 $admin =  "193930120";
 $update = json_decode(file_get_contents('php://input'));
 $from_id = $update->message->from->id;
 $chat_id = $update->message->chat->id;
 $text = $update->message->text;
-$jock = file_get_contents("http://roonx.com/api.php?roonx=time");
+$time = file_get_contents("http://roonx.com/api.php?roonx=time");
+$date = file_get_contents("http://roonx.com/api.php?roonx=date");
 function roonx($method,$datas=[]){
     $url = "https://api.telegram.org/bot".API_KEY."/".$method;
     $ch = curl_init();
@@ -31,7 +32,7 @@ roonx('sendMessage',[
 }elseif(preg_match('/^\/([Tt]ime)/',$text)){
 roonx('sendMessage',[
     'chat_id'=>$chat_id,
-    'text'=>$jock,
+    'text'=>زمان : $time\n\n تاریخ : $date,
     'parse_mode'=>'html'
   ]);
 }elseif(preg_match('/^\/([Ss]tats)/',$text) and $from_id == $admin){
