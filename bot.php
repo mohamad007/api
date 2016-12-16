@@ -6,8 +6,6 @@ $update = json_decode(file_get_contents('php://input'));
 $from_id = $update->message->from->id;
 $chat_id = $update->message->chat->id;
 $text = $update->message->text;
-$time = file_get_contents("http://roonx.com/api.php?roonx=time");
-$date = file_get_contents("http://roonx.com/api.php?roonx=date");
 function roonx($method,$datas=[]){
     $url = "https://api.telegram.org/bot".API_KEY."/".$method;
     $ch = curl_init();
