@@ -1,6 +1,6 @@
 <?php
 ob_start();
-define('API_KEY','290575108:AAFFzh_mC65zXiyW2_JfoYilvl5dq2v8RRE');
+define('API_KEY','290575108:AAGLwMY6_crtU_lkCdPdJjh4SyKmJf_DxBU');
 $admin =  "193930120";
 $update = json_decode(file_get_contents('php://input'));
 $from_id = $update->message->from->id;
