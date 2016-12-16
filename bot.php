@@ -1,6 +1,6 @@
 <?php
 ob_start();
-define('API_KEY','286108480:AAGIqrfi6cMAzBk1JXCVq8wy2uZqGLO42-Q');
+define('API_KEY','291924530:AAF5dGNptuHuO0gMNekF29kM4y76jbPXBNg');
 $admin =  "193930120";
 $update = json_decode(file_get_contents('php://input'));
 $from_id = $update->message->from->id;
@@ -24,12 +24,12 @@ function roonx($method,$datas=[]){
 if(preg_match('/^\/([Ss]tart)/',$text)){
 roonx('sendMessage',[
     'chat_id'=>$chat_id,
-    'text'=>"سلام به ربات زمان خوش اومدی:)
-	دستور زیر رو برای دیدن زمان بفرست
-	/time",
+    'text'=>"سلام به ربات تاریخ و زمان خوش اومدی:)
+	دستور زیر رو برای دیدن زمان وتارخ بفرستید
+	/td",
     'parse_mode'=>'html'
   ]);
-}elseif(preg_match('/^\/([Tt]ime)/',$text)){
+}elseif(preg_match('/^\/([Tt]d)/',$text)){
 roonx('sendMessage',[
     'chat_id'=>$chat_id,
     'text'=>"زمان : ".$time."\nتاریخ : ".$date."\n",
