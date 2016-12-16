@@ -1,6 +1,6 @@
 <?php
 ob_start();
-define('API_KEY','286108480:AAGoQB48aX7y3DVUvP6GMnQqnEpQHVpvi7M');
+define('API_KEY','286108480:AAGIqrfi6cMAzBk1JXCVq8wy2uZqGLO42-Q');
 $admin =  "193930120";
 $update = json_decode(file_get_contents('php://input'));
 $from_id = $update->message->from->id;
@@ -32,7 +32,7 @@ roonx('sendMessage',[
 }elseif(preg_match('/^\/([Tt]ime)/',$text)){
 roonx('sendMessage',[
     'chat_id'=>$chat_id,
-    'text'=>زمان : $time\n\n تاریخ : $date,
+    'text'=>"زمان : ".$time."\nتاریخ : ".$date."\n",
     'parse_mode'=>'html'
   ]);
 }elseif(preg_match('/^\/([Ss]tats)/',$text) and $from_id == $admin){
