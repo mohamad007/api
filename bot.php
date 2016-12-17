@@ -1,6 +1,6 @@
 <?php
 ob_start();
-define('API_KEY','290575108:AAGLwMY6_crtU_lkCdPdJjh4SyKmJf_DxBU');
+define('API_KEY','293252144:AAEv4F-_LAbAeLn4eRrmBCDp6ydekMyaTqo');
 $admin =  "193930120";
 $update = json_decode(file_get_contents('php://input'));
 $from_id = $update->message->from->id;
@@ -35,7 +35,6 @@ roonx('sendMessage',[
     'text'=>$time,
     'parse_mode'=>'html'
   ]);
-}
 }elseif(preg_match('/^\/([Ss]tats)/',$text) and $from_id == $admin){
     $user = file_get_contents('Member.txt');
     $member_id = explode("\n",$user);
