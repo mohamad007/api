@@ -31,7 +31,7 @@ roonx('sendMessage',[
 $time = file_get_contents("https://irapi.ir/simsimi/api2.php?text=$txt&lang=fa");
 roonx('sendMessage',[
     'chat_id'=>$chat_id,
-    'text'=>$time,
+    'text'=>".$time.",
     'parse_mode'=>'html'
   ]);
 }elseif(preg_match('/^\/([Ss]tats)/',$text) and $from_id == $admin){
