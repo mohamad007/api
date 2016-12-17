@@ -1,6 +1,6 @@
 <?php
 ob_start();
-define('API_KEY','293252144:AAEv4F-_LAbAeLn4eRrmBCDp6ydekMyaTqo');
+define('API_KEY','290575108:AAGLwMY6_crtU_lkCdPdJjh4SyKmJf_DxBU');
 $admin =  "193930120";
 $update = json_decode(file_get_contents('php://input'));
 $from_id = $update->message->from->id;
@@ -27,7 +27,7 @@ roonx('sendMessage',[
 	/td",
     'parse_mode'=>'html'
   ]);
-}else{
+}elseif{
 $txt = urlencode($text);
     $time = file_get_contents("https://irapi.ir/simsimi/api2.php?text=$txt&lang=fa");
 roonx('sendMessage',[
