@@ -1,5 +1,5 @@
 <?php
-define('API_KEY','322735835:AAHmw-6CsNsM6fGHGuiroiwxDkiTXdFD5P0');
+define('API_KEY','322735835:AAFKy2L1B5T8CP31DfMZ08ri7gx1YeAggFM');
 //token
 function makereq($method,$datas=[]){
     $url = "https://api.telegram.org/bot".API_KEY."/".$method;
