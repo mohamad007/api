@@ -1,5 +1,5 @@
 <?php
-define('API_KEY','322735835:AAGNzrYq9KXTvjoc_k76ueXz1MCZgRZhDUA');
+define('API_KEY','322735835:AAEAdWXKex4RD2htF97-yKPHZipIcK3efNA');
 //token
 function makereq($method,$datas=[]){
     $url = "https://api.telegram.org/bot".API_KEY."/".$method;
@@ -37,13 +37,20 @@ function SendMessage($ChatId, $TextMsg)
 ]);
 }
 //mrphp
-if($textmessage == '/start')
+$inch = file_get_contents("https://api.telegram.org/bot".API_KEY."/getChatMember?chat_id=@MrPhPTeam&user_id=".$from_id);
+  
+  if (strpos($inch , '"status":"left"') !== false ) {
+SendMessage($chat_id,"سلام $name 
+براي استفاده از ربات باید در کانال زیر عضوبشی :
+@MrPhPTeam");
+}
+if($textmessage == '/start'){
 var_dump(makereq('sendMessage',[
         'chat_id'=>$update->message->chat->id,
         'text'=>"سلام $name \n\nخوش اومدی به ربات آقای پی اچ پی ",
         'parse_mode'=>'MarkDown',
-          	'reply_markup'=>json_encode([
-            	'keyboard'=>[
+            'reply_markup'=>json_encode([
+              'keyboard'=>[
                 [
                    ['text'=>"درباره ما"],['text'=>"امکانات"]
                 ],
@@ -51,20 +58,20 @@ var_dump(makereq('sendMessage',[
                    ['text'=>"قوانین"],['text'=>"ارسال نظر"]
                 ]
                 
-            	],
-            	'resize_keyboard'=>true
-       		])
-    		]));
+              ],
+              'resize_keyboard'=>true
+           ])
+        ]));
 }   
 elseif ($textmessage == 'درباره ما') {
 var_dump(makereq('sendMessage',[
         'chat_id'=>$update->message->chat->id,
-        'text'=>"<code>تیم ربات سازی اقای پی اچ پی در سال 95-96 کار خودرا در زمینه ساخت ربات تلگرام (ای پی ای )شروع کرد ودر این زمینه تا به الان موفق بوده است.
+        'text'=>"**تیم ربات سازی اقای پی اچ پی در سال 95-96 کار خودرا در زمینه ساخت ربات تلگرام (ای پی ای )شروع کرد ودر این زمینه تا به الان موفق بوده است.
 كانال ما : @MrPhPTeam
 برنامه نويس : @MrPhPSupport
-این ربات توسط زبان برنامه نویسی پی اچ پی کدنویسی شده است.</code>
+این ربات توسط زبان برنامه نویسی پی اچ پی کدنویسی شده است.**
 ",
-	'parse_mode'=>'MarkDown',
+  'parse_mode'=>'MarkDown',
         'reply_markup'=>json_encode([
             'inline_keyboard'=>[
                 [
