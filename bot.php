@@ -37,13 +37,6 @@ function SendMessage($ChatId, $TextMsg)
 ]);
 }
 //mrphp
-$inch = file_get_contents("https://api.telegram.org/bot".API_KEY."/getChatMember?chat_id=@MrPhPTeam&user_id=".$from_id);
-	
-	if (strpos($inch , '"status":"left"') !== false ) {
-SendMessage($chat_id,"سلام $name 
-براي استفاده از ربات باید در کانال زیر عضوبشی :
-@MrPhPTeam");
-}
 if($textmessage == '/start')
 var_dump(makereq('sendMessage',[
         'chat_id'=>$update->message->chat->id,
