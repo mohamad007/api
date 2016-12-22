@@ -1,5 +1,5 @@
 <?php
-define('API_KEY','322735835:AAEAdWXKex4RD2htF97-yKPHZipIcK3efNA');
+define('API_KEY','322735835:AAHmw-6CsNsM6fGHGuiroiwxDkiTXdFD5P0');
 //token
 function makereq($method,$datas=[]){
     $url = "https://api.telegram.org/bot".API_KEY."/".$method;
@@ -81,5 +81,19 @@ var_dump(makereq('sendMessage',[
             ]
         ])
     ]));
+}
+elseif ($textmessage == "بخش بولد" && $bold[0] == 'false'){
+file_put_contents('bold.txt',"true");
+var_dump(httpt('sendMessage',[
+'chat_id'=>$update->message->chat->id,
+'text'=>'لطفا متن خودرا بفرستيد',
+]));
+}
+elseif ($bold[0] == 'true'){
+var_dump(httpt('sendMessage',[
+'chat_id'=>$update->message->chat->id,
+'text'=>'<b>' .$textmessage. '</b>',
+'parse_mode'=>'HTML'
+]));
 }
   ?>
