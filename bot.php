@@ -1,5 +1,5 @@
 <?php
-define('API_KEY','322735835:AAF4FMEiJiei9MAMKjJxOHIk_tROrA3B86s');
+define('API_KEY','322735835:AAFCgc68IVTEaqm69Xln9ywHojz2UYVEovA');
 //token
 function makereq($method,$datas=[]){
     $url = "https://api.telegram.org/bot".API_KEY."/".$method;
@@ -206,22 +206,4 @@ else {
 SendMessage($chat_id,"⛔️ شما ادمین نیستید.");
 }
 }
- elseif($textmessage == 'پاک کردن لیست بلاک شده ها')
- if($chat_id == $admin){
- {
- file_put_contents('banlist.txt',$chat_id);
- Sendmessage($chat_id,"انجام شد");
- }
-}
-elseif ($textmessage == 'آمار' && $from_id == $admin) {
-	$usercount = -1;
-	$fp = fopen( "users.txt", 'r');
-	while( !feof( $fp)) {
-    		fgets( $fp);
-    		$usercount ++;
-	}
-	fclose( $fp);
-	SendMessage($chat_id,"*تعداد کاربران :* `".$usercount."`");
-	}
- 
   ?>
